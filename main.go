@@ -74,7 +74,7 @@ func handleExecute(w http.ResponseWriter, r *http.Request) {
 	escapedCode := strings.ReplaceAll(req.Code, "\"", "\\\"")
 
 	// Run with sh -c to replicate Node's exec shell environment
-	cmdStr := fmt.Sprintf(`sandbox do -- /usr/bin/python3 -c "%s"`, escapedCode)
+	cmdStr := fmt.Sprintf(`/usr/local/gcp/bin/sandbox do -- /usr/bin/python3 -c "%s"`, escapedCode)
 	cmd := exec.Command("sh", "-c", cmdStr)
 
 	var stdout, stderr bytes.Buffer
