@@ -9,14 +9,15 @@ A lightweight, high-performance Go application designed to run Python code secur
 
 ## Deployment
 
-Set your Google Cloud Project ID as an environment variable and deploy the service using the `gcloud` CLI:
+Set your Google Cloud Project ID and region as environment variables, and deploy the service using the `gcloud` CLI:
 
 ```bash
 export PROJECT_ID="your-project-id"
+export REGION="europe-west9"
 
 gcloud run deploy sandbox \
   --source . \
-  --region europe-west9 \
+  --region $REGION \
   --project $PROJECT_ID \
   --execution-environment gen2 \
   --allow-unauthenticated
@@ -30,7 +31,7 @@ Once deployed, retrieve the service URL using the `gcloud` CLI and query the API
 
 ```bash
 # Get the live Cloud Run Service URL
-export SERVICE_URL=$(gcloud run services describe sandbox --region europe-west9 --format 'value(status.url)')
+export SERVICE_URL=$(gcloud run services describe sandbox --region $REGION --format 'value(status.url)')
 ```
 
 ### 1. Check Service Status (GET `/`)
