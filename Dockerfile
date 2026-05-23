@@ -18,18 +18,6 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends python3 && \
     rm -rf /var/lib/apt/lists/*
 
-# Create a stub/wrapper for the "sandbox" CLI so the application runs successfully inside the container.
-# If a real sandbox binary exists at /usr/bin/sandbox, it will delegate to it; otherwise, it executes python directly.
-RUN echo '#!/bin/sh\n\
-if [ -x /usr/bin/sandbox ]; then\n\
-  exec /usr/bin/sandbox "$@"\n\
-fi\n\
-if [ "$1" = "do" ] && [ "$2" = "--" ]; then\n\
-  shift 2\n\
-fi\n\
-exec "$@"' > /usr/local/bin/sandbox && \
-chmod +x /usr/local/bin/sandbox
-
 # Copy the compiled Go server from the builder stage
 COPY --from=builder /app/server /usr/local/bin/server
 
