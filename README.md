@@ -16,6 +16,7 @@ gcloud run deploy sandbox \
   --source . \
   --region europe-west9 \
   --project steren-run \
+  --execution-environment gen2 \
   --allow-unauthenticated
 ```
 
