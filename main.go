@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"strings"
 )
 
 type ExecuteRequest struct {
@@ -70,12 +69,9 @@ func handleExecute(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Exact escape logic requested: replace `"` with `\"`
-	escapedCode := strings.ReplaceAll(req.Code, "\"", "\\\"")
-
-	// Run with sh -c to replicate Node's exec shell environment
-	cmdStr := fmt.Sprintf(`/usr/local/gcp/bin/sandbox do -- /usr/bin/python3 -c "%s"`, escapedCode)
-	cmd := exec.Command("sh", "-c", cmdStr)
+	// Execute sandbox directly, passing the Python code as a clean argument.
+	// This is Go-idiomatic, avoids shell invocation, and eliminates any need for quote escaping.
+	cmd := exec.Command("/usr/local/gcp/bin/sandbox", "do", "--", "/usr/bin/python3", "-c", req.Code)
 
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
