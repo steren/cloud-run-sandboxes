@@ -6,13 +6,38 @@
 # ==============================================================================
 
 # Default configurations
-DEFAULT_URL="https://sandbox-879479752447.europe-west9.run.app/execute"
-DEFAULT_CONCURRENCY=5
-DEFAULT_TOTAL_REQUESTS=50
+DEFAULT_CONCURRENCY=10
+DEFAULT_TOTAL_REQUESTS=100
 
-TARGET_URL="${1:-$DEFAULT_URL}"
-CONCURRENCY="${2:-$DEFAULT_CONCURRENCY}"
-TOTAL_REQUESTS="${3:-$DEFAULT_TOTAL_REQUESTS}"
+TARGET_URL="$1"
+CONCURRENCY="$2"
+TOTAL_REQUESTS="$3"
+
+# Prompt for URL if not provided as an argument
+if [ -z "$TARGET_URL" ]; then
+  printf "Please enter the target execution URL: "
+  read -r TARGET_URL
+fi
+
+# Ensure TARGET_URL is not empty
+if [ -z "$TARGET_URL" ]; then
+  echo "Error: Target execution URL is required." >&2
+  exit 1
+fi
+
+# Prompt for Concurrency if not provided as an argument
+if [ -z "$CONCURRENCY" ]; then
+  printf "Please enter concurrency limit [%d]: " "$DEFAULT_CONCURRENCY"
+  read -r CONCURRENCY
+  CONCURRENCY="${CONCURRENCY:-$DEFAULT_CONCURRENCY}"
+fi
+
+# Prompt for Total Requests if not provided as an argument
+if [ -z "$TOTAL_REQUESTS" ]; then
+  printf "Please enter total requests to send [%d]: " "$DEFAULT_TOTAL_REQUESTS"
+  read -r TOTAL_REQUESTS
+  TOTAL_REQUESTS="${TOTAL_REQUESTS:-$DEFAULT_TOTAL_REQUESTS}"
+fi
 
 # Working directory & Temp log files
 WORK_DIR="$(pwd)/.load_test_tmp"
@@ -70,7 +95,26 @@ echo " Starting Load Test on Python Sandbox Service"
 echo "=============================================================================="
 echo "Target URL:      $TARGET_URL"
 echo "Concurrency:     $CONCURRENCY"
-echo "Total Requests:  $TOTAL_REQUESTS"
+echo "Total Sandbox:   $TOTAL_REQUESTS"
+echo "=============================================================================="
+echo "Measuring baseline end to end latencies..."
+cold_start=$(get_time)
+curl -s -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"code": "import time; print(\"Cold check\")"}' \
+  "$TARGET_URL" > /dev/null
+cold_end=$(get_time)
+cold_latency=$(awk -v start="$cold_start" -v end="$cold_end" 'BEGIN {printf "%.4f", end - start}')
+echo "cold start: ${cold_latency}s"
+
+warm_start=$(get_time)
+curl -s -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"code": "import time; print(\"Warm check\")"}' \
+  "$TARGET_URL" > /dev/null
+warm_end=$(get_time)
+warm_latency=$(awk -v start="$warm_start" -v end="$warm_end" 'BEGIN {printf "%.4f", end - start}')
+echo "warm:       ${warm_latency}s"
 echo "=============================================================================="
 echo "Sending concurrent requests..."
 
@@ -176,15 +220,6 @@ p99=$(echo "$metrics" | cut -d' ' -f7)
 # Calculate total execution duration
 total_duration=$(awk -v start="$total_start_time" -v end="$total_end_time" 'BEGIN {print end - start}')
 
-# Calculate executed sandboxes per minute (RPM)
-rpm=$(awk -v success="$total_success" -v duration="$total_duration" 'BEGIN {
-  if (duration > 0) {
-    print (success / duration) * 60
-  } else {
-    print 0
-  }
-}')
-
 # Display metrics report
 echo "=============================================================================="
 echo " Load Test Metrics Summary"
@@ -192,8 +227,7 @@ echo "==========================================================================
 printf "Total Execution Time:             %.3f seconds\n" "$total_duration"
 printf "Max Peak Concurrency Sandbox:     %d sandboxes\n" "$peak_concurrency"
 printf "Total Sandboxes Created (Success): %d (HTTP 200)\n" "$total_success"
-printf "Total Requests Sent:              %d\n" "$total_requests"
-printf "Executed Sandboxes Per Minute:    %.2f RPM\n" "$rpm"
+printf "Total Sandbox:                    %d\n" "$total_requests"
 echo "------------------------------------------------------------------------------"
 echo " End-to-End Latency Percentiles (Seconds):"
 echo "------------------------------------------------------------------------------"

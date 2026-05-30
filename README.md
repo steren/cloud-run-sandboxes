@@ -55,3 +55,32 @@ curl -X POST $SERVICE_URL/execute \
   "stderr": ""
 }
 ```
+
+---
+
+## Load Testing
+
+The project includes a concurrent, zero-dependency load-testing script ([load_test.sh](load_test.sh)) to stress-test your deployed Cloud Run service.
+
+It monitors active background process pools, enforces a strict concurrency ceiling, dynamically generates unique Python payloads per request to bypass runtime caching, and computes detailed execution and latency metrics.
+
+### Running the Load Test
+
+You can execute the script directly using `bash`:
+
+```bash
+# Run with defaults (prompts for URL, uses 10 concurrency, 100 total requests)
+bash load_test.sh
+
+# Run with customized limits directly: bash load_test.sh <url> <concurrency> <total_requests>
+bash load_test.sh $SERVICE_URL/execute 10 100
+```
+
+### Metrics Measured
+
+- **Total Execution Time**: Total time taken to complete the entire test run.
+- **Max Peak Concurrency Sandbox**: Peak concurrent sandbox executions achieved during the run.
+- **Total Sandboxes Created**: Total successful execution counts (HTTP 200).
+- **Total Sandbox**: Total number of sandboxes requested.
+- **Latency Percentiles**: End-to-End processing latencies (Average, p50, p90, p95, p99).
+
