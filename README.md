@@ -12,8 +12,6 @@ A lightweight, high-performance Go application designed to run Python code secur
 
 ## Deployment
 
-The easiest way to deploy the service is using the automated deployment helper script:
-
 ```bash
 # Deploys using defaults (prompts for GCP Project ID, defaults to us-west1 region)
 bash deploy.sh
