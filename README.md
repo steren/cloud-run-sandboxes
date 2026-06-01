@@ -26,8 +26,8 @@ gcloud run deploy sandbox \
   --source . \
   --region $REGION \
   --project $PROJECT_ID \
-  --cpu 4 \
-  --memory 16Gi \
+  --cpu 2 \
+  --memory 4Gi \
   --execution-environment gen2 \
   --allow-unauthenticated
 ```
@@ -43,24 +43,18 @@ Once deployed, retrieve the service URL using the `gcloud` CLI and query the API
 export SERVICE_URL=$(gcloud run services describe sandbox --region $REGION --format 'value(status.url)')
 ```
 
-### 1. Check Service Status (GET `/`)
-
-```bash
-curl $SERVICE_URL/
-```
-
-### 2. Execute Python Code (POST `/execute`)
+### Execute Python Code (POST `/execute`)
 
 ```bash
 curl -X POST $SERVICE_URL/execute \
   -H "Content-Type: application/json" \
-  -d '{"code": "import sys; print(f\"Running Python {sys.version} inside Cloud Run!\")"}'
+  -d '{"code": "import sys; print(f\"Running untrusted Python {sys.version}  inside a Cloud Run sandbox\")"}'
 ```
 
 **Expected Response:**
 ```json
 {
-  "stdout": "Running Python 3.11.2 inside Cloud Run!\n",
+  "stdout": "Running untrusted Python 3.11.2  inside a Cloud Run sandbox\n",
   "stderr": ""
 }
 ```
@@ -69,9 +63,7 @@ curl -X POST $SERVICE_URL/execute \
 
 ## Load Testing
 
-The project includes a concurrent load-testing wrapper script ([load_test.sh](load_test.sh)) built on top of [rakyll/hey](https://github.com/rakyll/hey).
-
-It first runs baseline cold and warm start latency measurements, and then triggers a high-performance concurrent load test using `hey`.
+We use [rakyll/hey](https://github.com/rakyll/hey) to perform high-performance concurrent load testing on the Python sandbox service.
 
 ### Prerequisites
 
@@ -83,14 +75,13 @@ brew install hey
 
 ### Running the Load Test
 
-You can execute the script directly using `bash`:
+Run the raw `hey` command directly with the inlined Python payload:
 
 ```bash
-# Run with defaults (prompts for URL, uses 10 concurrency, 100 total sandboxes)
-bash load_test.sh
-
-# Run with customized limits directly: bash load_test.sh <url> <concurrency> <total_sandboxes>
-bash load_test.sh $SERVICE_URL/execute 10 100
+hey -n 10000 -c 1000 -m POST \
+  -H "Content-Type: application/json" \
+  -d '{"code": "import uuid, time; print(str(uuid.uuid4()) + \" \" + str(time.time()))"}' \
+  $SERVICE_URL/execute
 ```
 
 ### Metrics Measured

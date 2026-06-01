@@ -43,8 +43,8 @@ gcloud run deploy sandbox \
   --source . \
   --region "$REGION" \
   --project "$PROJECT_ID" \
-  --cpu 4 \
-  --memory 16Gi \
+  --cpu 2 \
+  --memory 4Gi \
   --execution-environment gen2 \
   --allow-unauthenticated
 

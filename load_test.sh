@@ -6,8 +6,8 @@
 # ==============================================================================
 
 # Default configurations
-DEFAULT_CONCURRENCY=10
-DEFAULT_TOTAL_REQUESTS=100
+DEFAULT_CONCURRENCY=100
+DEFAULT_TOTAL_REQUESTS=1000
 
 # Check if 'hey' is installed
 if ! command -v hey >/dev/null 2>&1; then
