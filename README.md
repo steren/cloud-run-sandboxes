@@ -2,6 +2,9 @@
 
 A lightweight, high-performance Go application designed to run Python code securely inside a sandboxed container environment on Google Cloud Run.
 
+> [!WARNING]
+> Cloud Run sandboxes are in Private Preview, sign up at https://forms.gle/pqHsL294rrLN2KtX7
+
 > [!IMPORTANT]
 > The `/usr/local/gcp/bin/sandbox` execution binary is a secure environment wrapper provided specifically by Google Cloud Run. Because this binary is not present in local environments or standard Docker runtimes, the `/execute` endpoint will only function properly when deployed and running on Cloud Run.
 
@@ -78,7 +81,7 @@ brew install hey
 Run the raw `hey` command directly with the inlined Python payload:
 
 ```bash
-hey -n 10000 -c 1000 -m POST \
+hey -n 1000 -c 100 -m POST \
   -H "Content-Type: application/json" \
   -d '{"code": "import uuid, time; print(str(uuid.uuid4()) + \" \" + str(time.time()))"}' \
   $SERVICE_URL/execute
