@@ -61,22 +61,22 @@ curl -X POST $SERVICE_URL/execute \
 
 ## Load Testing
 
-We use [rakyll/hey](https://github.com/rakyll/hey) to perform high-performance concurrent load testing on the Python sandbox service.
+We use [hatoo/oha](https://github.com/hatoo/oha) to perform high-performance concurrent load testing on the Python sandbox service.
 
 ### Prerequisites
 
-Ensure you have `hey` installed:
+Ensure you have `oha` installed:
 ```bash
 # macOS
-brew install hey
+brew install oha
 ```
 
 ### Running the Load Test
 
-Run the raw `hey` command directly with the inlined Python payload:
+Run the raw `oha` command directly with the inlined Python payload:
 
 ```bash
-hey -n 1000 -c 100 -m POST \
+oha -n 1000 -c 100 -m POST \
   -H "Content-Type: application/json" \
   -d '{"code": "import uuid, time; print(str(uuid.uuid4()) + \" \" + str(time.time()))"}' \
   $SERVICE_URL/execute
@@ -84,7 +84,7 @@ hey -n 1000 -c 100 -m POST \
 
 ### Metrics Measured
 
-`hey` natively captures and prints detailed execution statistics including:
+`oha` natively captures and prints detailed execution statistics including:
 - **Total Execution Duration & QPS Throughput**
 - **Response Latency Distribution** (10%, 25%, 50%, 75%, 90%, 95%, 99% percentiles)
 - **Status Code Distribution** (listing successful vs. failed runs)

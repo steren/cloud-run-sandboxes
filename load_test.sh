@@ -2,20 +2,20 @@
 
 # ==============================================================================
 # load_test.sh
-# Load-testing script for Python Sandbox Service using 'hey'.
+# Load-testing script for Python Sandbox Service using 'oha'.
 # ==============================================================================
 
 # Default configurations
 DEFAULT_CONCURRENCY=100
 DEFAULT_TOTAL_REQUESTS=1000
 
-# Check if 'hey' is installed
-if ! command -v hey >/dev/null 2>&1; then
-  echo "Error: 'hey' is not installed." >&2
+# Check if 'oha' is installed
+if ! command -v oha >/dev/null 2>&1; then
+  echo "Error: 'oha' is not installed." >&2
   echo "Please install it using one of the following commands:" >&2
-  echo "  macOS:  brew install hey" >&2
-  echo "  Linux:  go install github.com/rakyll/hey@latest" >&2
-  echo "  Web:    https://github.com/rakyll/hey" >&2
+  echo "  macOS:  brew install oha" >&2
+  echo "  Linux:  cargo install oha" >&2
+  echo "  Web:    https://github.com/hatoo/oha" >&2
   exit 1
 fi
 
@@ -66,7 +66,7 @@ get_time() {
 }
 
 echo "=============================================================================="
-echo " Starting Load Test on Python Sandbox Service using 'hey'"
+echo " Starting Load Test on Python Sandbox Service using 'oha'"
 echo "=============================================================================="
 echo "Target URL:      $TARGET_URL"
 echo "Concurrency:     $CONCURRENCY"
@@ -94,13 +94,13 @@ warm_latency=$(awk -v start="$warm_start" -v end="$warm_end" 'BEGIN {printf "%.4
 echo "warm:       ${warm_latency}s"
 echo "=============================================================================="
 
-# 2. Executing concurrent sandboxes using hey
+# 2. Executing concurrent sandboxes using oha
 echo "Executing concurrent sandboxes..."
 
 # Payload executes python code that outputs different values on every request
 PAYLOAD='{"code": "import uuid, time; print(str(uuid.uuid4()) + \" \" + str(time.time()))"}'
 
-hey -n "$TOTAL_REQUESTS" \
+oha -n "$TOTAL_REQUESTS" \
     -c "$CONCURRENCY" \
     -m POST \
     -H "Content-Type: application/json" \

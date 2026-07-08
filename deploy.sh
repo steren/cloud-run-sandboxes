@@ -6,7 +6,8 @@
 # ==============================================================================
 
 # Default configurations
-DEFAULT_REGION="us-west1"
+ACTIVE_REGION=$(gcloud config get-value run/region 2>/dev/null)
+DEFAULT_REGION="${ACTIVE_REGION:-us-west1}"
 
 PROJECT_ID="${PROJECT_ID}"
 REGION="${REGION:-$DEFAULT_REGION}"
