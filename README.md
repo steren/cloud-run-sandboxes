@@ -17,13 +17,8 @@ bash deploy.sh
 Alternatively, you can configure your environment variables and deploy manually using the `gcloud` CLI directly:
 
 ```bash
-export PROJECT_ID="your-project-id"
-export REGION="us-west1"
-
 gcloud beta run deploy sandbox \
   --source . \
-  --region $REGION \
-  --project $PROJECT_ID \
   --cpu 2 \
   --memory 4Gi \
   --sandbox-launcher \
@@ -38,7 +33,7 @@ Once deployed, retrieve the service URL using the `gcloud` CLI and query the API
 
 ```bash
 # Get the live Cloud Run Service URL
-export SERVICE_URL=$(gcloud run services describe sandbox --region $REGION --format 'value(status.url)')
+export SERVICE_URL=$(gcloud beta run services describe sandbox --format 'value(status.url)')
 ```
 
 ### Execute Python Code (POST `/execute`)
