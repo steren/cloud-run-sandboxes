@@ -46,6 +46,7 @@ gcloud beta run deploy sandbox \
   --project "$PROJECT_ID" \
   --cpu 2 \
   --memory 4Gi \
+  --max 100 \
   --sandbox-launcher \
   --no-invoker-iam-check
 

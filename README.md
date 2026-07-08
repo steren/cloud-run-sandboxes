@@ -21,9 +21,13 @@ gcloud beta run deploy sandbox \
   --source . \
   --cpu 2 \
   --memory 4Gi \
+  --max 100 \
   --sandbox-launcher \
   --no-invoker-iam-check
 ```
+
+> [!TIP]
+> For better performance during the load test, we recommend using min instances. For example, you can append `--min 10` to your deployment command.
 
 ---
 
