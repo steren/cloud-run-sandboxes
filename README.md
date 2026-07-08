@@ -20,7 +20,7 @@ Alternatively, you can configure your environment variables and deploy manually 
 export PROJECT_ID="your-project-id"
 export REGION="us-west1"
 
-gcloud run deploy sandbox \
+gcloud beta run deploy sandbox \
   --source . \
   --region $REGION \
   --project $PROJECT_ID \

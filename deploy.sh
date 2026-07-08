@@ -40,7 +40,7 @@ echo "Region:          $REGION"
 echo "=============================================================================="
 
 # Run gcloud deploy
-gcloud run deploy sandbox \
+gcloud beta run deploy sandbox \
   --source . \
   --region "$REGION" \
   --project "$PROJECT_ID" \
