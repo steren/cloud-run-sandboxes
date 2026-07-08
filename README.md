@@ -2,9 +2,6 @@
 
 A lightweight, high-performance Go application designed to run Python code securely inside a sandboxed container environment on Google Cloud Run.
 
-> [!WARNING]
-> Cloud Run sandboxes are in Private Preview, sign up at https://forms.gle/pqHsL294rrLN2KtX7
-
 > [!IMPORTANT]
 > The `/usr/local/gcp/bin/sandbox` execution binary is a secure environment wrapper provided specifically by Google Cloud Run. Because this binary is not present in local environments or standard Docker runtimes, the `/execute` endpoint will only function properly when deployed and running on Cloud Run.
 
@@ -29,8 +26,8 @@ gcloud run deploy sandbox \
   --project $PROJECT_ID \
   --cpu 2 \
   --memory 4Gi \
-  --execution-environment gen2 \
-  --allow-unauthenticated
+  --sandbox-launcher \
+  --no-invoker-iam-check
 ```
 
 ---

@@ -45,8 +45,8 @@ gcloud run deploy sandbox \
   --project "$PROJECT_ID" \
   --cpu 2 \
   --memory 4Gi \
-  --execution-environment gen2 \
-  --allow-unauthenticated
+  --sandbox-launcher \
+  --no-invoker-iam-check
 
 EXIT_CODE=$?
 
