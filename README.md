@@ -27,7 +27,7 @@ gcloud beta run deploy sandbox \
 ```
 
 > [!TIP]
-> For better performance during the load test, we recommend using min instances. For example, you can append `--min 10` to your deployment command.
+> For better performance during the load test, we recommend using min instances. For example, you can append `--min 10` to your deployment command. You can also append `--concurrency 20` or lower to decrease the number of sandboxes per Cloud Run service instance you run simultaneously, especially for burst load testing scenarios.
 
 ---
 
